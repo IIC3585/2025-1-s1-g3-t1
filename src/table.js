@@ -4,13 +4,13 @@ export function renderTable(data, handleRowSelection, handleColumnSelection) {
     table.innerHTML = '';
   
     const headerRow = document.createElement('tr');
-    data[0].forEach((header, colIndex) => {
+    data[0].forEach((header, columnIndex) => {
       const th = document.createElement('th');
       th.textContent = header;
       th.addEventListener('click', () => {
         clearSelections();
-        handleColumnSelection(colIndex);
-        highlightColumn(colIndex);
+        handleColumnSelection(columnIndex);
+        highlightColumn(columnIndex);
       });
       headerRow.appendChild(th);
     });
@@ -44,8 +44,8 @@ export function renderTable(data, handleRowSelection, handleColumnSelection) {
     rowElement.classList.add('selected-row');
   }
   
-  function highlightColumn(colIndex) {
-    document.querySelectorAll(`th:nth-child(${colIndex + 1}), td:nth-child(${colIndex + 1})`)
+  function highlightColumn(columnIndex) {
+    document.querySelectorAll(`th:nth-child(${columnIndex + 1}), td:nth-child(${columnIndex + 1})`)
       .forEach(el => el.classList.add('selected-column'));
   }
   

@@ -2,7 +2,6 @@ import { parseCSV } from './functions/parser.js';
 import { rowDelete } from './functions/rowDelete.js';
 import { columnDelete } from './functions/columnDelete.js';
 import { renderTable } from './table.js';
-import { pipe } from 'fp-ts/function';
 import { fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as Effect from 'effect/Effect';
@@ -37,10 +36,7 @@ export function setupCSVHandler() {
   });
 
   fromEvent(fileInput, 'change')
-    .pipe(
-      map(event => event.target.files[0]),
-      map(file => Effect.runSync(readFileEffect(file)))
-    )
+    .pipe(map(event => event.target.files[0]),map(file => Effect.runSync(readFileEffect(file))))
     .subscribe();
 }
 
@@ -49,7 +45,7 @@ function readFileEffect(file) {
     const reader = new FileReader();
 
     reader.onload = () => {
-      csvData = pipe(reader.result, parseCSV);
+      csvData = parseCSV(reader.result);
       renderTable(csvData, handleRowSelection, handleColumnSelection);
     };
     reader.readAsText(file);
