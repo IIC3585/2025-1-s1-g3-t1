@@ -26,6 +26,12 @@ document.querySelector('#app').innerHTML = `
       <input type="text" id="new-column" placeholder="Ej: 999999999,888888888,777777777" />
       <button id="insert-column" disabled>Insertar Columna</button>
     </div>
+
+    <div id="swap-container">
+      <label for="swap-row-1">Intercambiar columna:</label><br>
+      <input type="text" id="swap-row-1" placeholder="Ej: 0" />
+      <input type="text" id="swap-row-2" placeholder="Ej: 1" />
+      <button id="swap" disabled>Intercambiar</button>
     </div>
 
      <div class="table-scroll-wrapper">
