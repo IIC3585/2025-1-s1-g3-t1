@@ -1,6 +1,8 @@
 import { parseCSV } from './functions/parser.js';
 import { rowDelete } from './functions/rowDelete.js';
 import { columnDelete } from './functions/columnDelete.js';
+import { insertRow } from './functions/insertRow.js';
+import { insertColumn } from './functions/insertColumn.js';
 import { renderTable } from './table.js';
 import { fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,11 +11,18 @@ import * as Effect from 'effect/Effect';
 let csvData = [];
 let selectedRow = null;
 let selectedColumn = null;
+let newRow = null;
+let newColumn = null;
+
 
 export function setupCSVHandler() {
   const fileInput = document.getElementById('file');
   const deleteRowBtn = document.getElementById('delete-row');
   const deleteColumnBtn = document.getElementById('delete-column');
+  const insertRowBtn = document.getElementById('insert-row');
+  const insertColumnBtn = document.getElementById('insert-column');
+  const newRowInput = document.getElementById('new-row');
+  const newColumnInput = document.getElementById('new-column');
 
   if (!fileInput || !deleteRowBtn || !deleteColumnBtn) return;
 
@@ -31,6 +40,30 @@ export function setupCSVHandler() {
       csvData = columnDelete(csvData, selectedColumn);
       selectedColumn = null;
       renderTable(csvData, handleRowSelection, handleColumnSelection);
+      updateButtons();
+    }
+  });
+
+  insertRowBtn.addEventListener('click', () => {
+    if (newRowInput && newRowInput.value.trim() !== '') {
+      const rowValues = newRowInput.value.split(',').map(cell => cell.trim());
+      const index = selectedRow !== null ? selectedRow : csvData.length;
+      csvData = insertRow(csvData, index, rowValues);
+      renderTable(csvData, handleRowSelection, handleColumnSelection);
+      selectedRow = null;
+      newRowInput.value = '';
+      updateButtons();
+    }
+  });
+
+  insertColumnBtn.addEventListener('click', () => {
+    if (newColumnInput && newColumnInput.value.trim() !== '') {
+      const columnValues = newColumnInput.value.split(',').map(cell => cell.trim());
+      const index = selectedColumn !== null ? selectedColumn : (csvData[0]?.length || 0);
+      csvData = insertColumn(csvData, index, columnValues);
+      renderTable(csvData, handleRowSelection, handleColumnSelection);
+      selectedColumn = null;
+      newColumnInput.value = '';
       updateButtons();
     }
   });
@@ -67,4 +100,6 @@ function handleColumnSelection(colIndex) {
 function updateButtons() {
   document.getElementById('delete-row').disabled = selectedRow === null;
   document.getElementById('delete-column').disabled = selectedColumn === null;
+  document.getElementById('insert-row').disabled = selectedRow === null;
+  document.getElementById('insert-column').disabled = selectedColumn === null;
 }
