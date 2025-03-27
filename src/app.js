@@ -6,6 +6,7 @@ import { insertColumn } from './functions/insertColumn.js';
 import { rowstocolumns } from './functions/ rowsToColumns.js';
 import { columnstorows } from './functions/columnsToRows.js';
 import { swap } from './functions/swap.js';
+import { toHTMLTable } from './functions/toHTMLTable.js';
 import { renderTable } from './table.js';
 import { fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -14,8 +15,6 @@ import * as Effect from 'effect/Effect';
 let csvData = [];
 let selectedRow = null;
 let selectedColumn = null;
-let newRow = null;
-let newColumn = null;
 
 
 export function setupCSVHandler() {
@@ -31,7 +30,7 @@ export function setupCSVHandler() {
   const swapBtn = document.getElementById('swap');
   const swapCol1Input = document.getElementById('swap-row-1');
   const swapCol2Input = document.getElementById('swap-row-2');
-  
+  const toHTMLTableBtn = document.getElementById('toHTMLTable');
 
   if (!fileInput || !deleteRowBtn || !deleteColumnBtn) return;
 
@@ -100,6 +99,14 @@ export function setupCSVHandler() {
   }
   );
 
+  toHTMLTableBtn.addEventListener('click', () => {
+    if (csvData.length > 0) {
+      const html = toHTMLTable(csvData);
+      document.getElementById('html-output').value = html;
+    }
+  });
+  
+
   fromEvent(fileInput, 'change')
     .pipe(map(event => event.target.files[0]),map(file => Effect.runSync(readFileEffect(file))))
     .subscribe();
@@ -138,4 +145,6 @@ function updateButtons() {
   document.getElementById('rowsToColumns').disabled = csvData.length === 0;
   document.getElementById('columnsToRows').disabled = csvData.length === 0;
   document.getElementById('swap').disabled = csvData.length === 0;
+  document.getElementById('toHTMLTable').disabled = csvData.length === 0;
+
 }

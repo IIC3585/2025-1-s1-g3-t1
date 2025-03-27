@@ -37,7 +37,14 @@ document.querySelector('#app').innerHTML = `
      <div class="table-scroll-wrapper">
       <table id="table"></table>
     </div>
+
+    <div id="buttons-container">
+    <button id="toHTMLTable" disabled>Generar tabla HTML</button>
+    </div>
+    <textarea id="html-output" placeholder="Código HTML generado" rows="10" style="width:100%;"></textarea>
+
   </div>
+  
 `;
 
 setupCSVHandler();
