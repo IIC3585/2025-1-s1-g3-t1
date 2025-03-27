@@ -3,6 +3,8 @@ import { rowDelete } from './functions/rowDelete.js';
 import { columnDelete } from './functions/columnDelete.js';
 import { insertRow } from './functions/insertRow.js';
 import { insertColumn } from './functions/insertColumn.js';
+import { rowstocolumns } from './functions/ rowsToColumns.js';
+import { columnstorows } from './functions/columnsToRows.js';
 import { renderTable } from './table.js';
 import { fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -17,6 +19,8 @@ let newColumn = null;
 
 export function setupCSVHandler() {
   const fileInput = document.getElementById('file');
+  const rowsToColumnsBtn = document.getElementById('rowsToColumns');
+  const columnsToRowsBtn = document.getElementById('columnsToRows');
   const deleteRowBtn = document.getElementById('delete-row');
   const deleteColumnBtn = document.getElementById('delete-column');
   const insertRowBtn = document.getElementById('insert-row');
@@ -25,6 +29,18 @@ export function setupCSVHandler() {
   const newColumnInput = document.getElementById('new-column');
 
   if (!fileInput || !deleteRowBtn || !deleteColumnBtn) return;
+
+  rowsToColumnsBtn.addEventListener('click', () => {
+    csvData = rowstocolumns(csvData);
+    renderTable(csvData, handleRowSelection, handleColumnSelection);
+    updateButtons();
+  });
+
+  columnsToRowsBtn.addEventListener('click', () => {
+    csvData = columnstorows(csvData);
+    renderTable(csvData, handleRowSelection, handleColumnSelection);
+    updateButtons();
+  });
 
   deleteRowBtn.addEventListener('click', () => {
     if (selectedRow !== null) {
@@ -80,6 +96,7 @@ function readFileEffect(file) {
     reader.onload = () => {
       csvData = parseCSV(reader.result);
       renderTable(csvData, handleRowSelection, handleColumnSelection);
+      updateButtons();
     };
     reader.readAsText(file);
   });
@@ -102,4 +119,7 @@ function updateButtons() {
   document.getElementById('delete-column').disabled = selectedColumn === null;
   document.getElementById('insert-row').disabled = selectedRow === null;
   document.getElementById('insert-column').disabled = selectedColumn === null;
+  document.getElementById('rowsToColumns').disabled = csvData.length === 0;
+  document.getElementById('columnsToRows').disabled = csvData.length === 0;
+
 }
