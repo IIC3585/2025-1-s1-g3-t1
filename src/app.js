@@ -1,5 +1,5 @@
 import { parseCSV } from './functions/parser.js';
-import { rowDelete } from './functions/rowDelete.js';
+import { rowDelete } from './functions/rowDeleteLodash.js';
 import { columnDelete } from './functions/columnDelete.js';
 import { insertRow } from './functions/insertRow.js';
 import { insertColumn } from './functions/insertColumn.js';
@@ -7,6 +7,7 @@ import { rowstocolumns } from './functions/ rowsToColumns.js';
 import { columnstorows } from './functions/columnsToRows.js';
 import { swap } from './functions/swap.js';
 import { toHTMLTable } from './functions/toHTMLTable.js';
+import { downloadCSV } from './functions/downloadCSV.js';
 import { renderTable } from './table.js';
 import { fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -19,6 +20,7 @@ let selectedColumn = null;
 
 export function setupCSVHandler() {
   const fileInput = document.getElementById('file');
+  const downloadCSVBtn = document.getElementById('download-csv');
   const rowsToColumnsBtn = document.getElementById('rowsToColumns');
   const columnsToRowsBtn = document.getElementById('columnsToRows');
   const deleteRowBtn = document.getElementById('delete-row');
@@ -33,6 +35,14 @@ export function setupCSVHandler() {
   const toHTMLTableBtn = document.getElementById('toHTMLTable');
 
   if (!fileInput || !deleteRowBtn || !deleteColumnBtn) return;
+
+  downloadCSVBtn.addEventListener('click', () => {
+    downloadCSV(csvData);
+  });
+
+  fromEvent(fileInput, 'change')
+    .pipe(map(event => event.target.files[0]),map(file => Effect.runSync(readFileEffect(file))))
+    .subscribe();
 
   rowsToColumnsBtn.addEventListener('click', () => {
     csvData = rowstocolumns(csvData);
@@ -106,10 +116,6 @@ export function setupCSVHandler() {
     }
   });
   
-
-  fromEvent(fileInput, 'change')
-    .pipe(map(event => event.target.files[0]),map(file => Effect.runSync(readFileEffect(file))))
-    .subscribe();
 }
 
 function readFileEffect(file) {
@@ -138,6 +144,7 @@ function handleColumnSelection(colIndex) {
 }
 
 function updateButtons() {
+  document.getElementById('download-csv').disabled = csvData.length === 0;
   document.getElementById('delete-row').disabled = selectedRow === null;
   document.getElementById('delete-column').disabled = selectedColumn === null;
   document.getElementById('insert-row').disabled = selectedRow === null;

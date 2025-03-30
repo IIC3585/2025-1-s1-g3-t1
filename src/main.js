@@ -5,6 +5,7 @@ document.querySelector('#app').innerHTML = `
   <div class="app-container">
     <div class="controls-container">
     <input type="file" id="file" />
+    <button id="download-csv" disabled>Descargar CSV</button>
     <div id="buttons-container">
       <button id="rowsToColumns" disabled>Filas a Columnas</button>
     </div>
